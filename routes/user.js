@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');// for hashing and salting
 const {z}=require('zod');
 const {user}=require('../db')
+import { JWT_SECREST } from '../config';
 
 module.exports=router;
 app.post('/signup',async (req,res)=>{
@@ -58,6 +59,28 @@ app.post('/signup',async (req,res)=>{
     } catch (e) {
         res.status(404).json({
             message: "User already exists"
+        })
+    }
+})
+app.post('/signin/',async (req,res)=>{
+    const password = req.body.password;
+    const username = req.body.username;
+    const founduser = await userModel.findOne({
+        username
+    })
+
+    const ress = await bcrypt.compare(password, founduser.password);
+
+    if (founduser && ress) {
+        let token = jwt.sign({
+            _id: founduser._id.toString()
+        }, JWT_SECREST)
+        res.send({
+            token: token
+        })
+    } else {
+        res.status(404).send({
+            message: "invalid credientals"
         })
     }
 })
