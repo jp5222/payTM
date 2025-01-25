@@ -4,8 +4,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');// for hashing and salting
 const {z}=require('zod');
 const {user,Account}=require('../db')
-import { JWT_SECREST } from '../config';
-import {authMiddleware} from '../middleware'
+const {JWT_SECREST}=require('../config')
+const  {authMiddleware} =require('../middleware') 
+// console.log(JWT_SECREST)
 
 const reqbody=z.object({
     username:z.string().min(6).max(50),
