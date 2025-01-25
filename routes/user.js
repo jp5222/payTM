@@ -3,7 +3,7 @@ const router=express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');// for hashing and salting
 const {z}=require('zod');
-const {user}=require('../db')
+const {user,Account}=require('../db')
 import { JWT_SECREST } from '../config';
 import {authMiddleware} from '../middleware'
 
@@ -45,11 +45,16 @@ router.post('/signup',async (req,res)=>{
         
         const hashedpass = await bcrypt.hash(password, 5); //hashed password
         
-        await user.create({
+        const User=await user.create({
             username:username,
             firstName: firstName ,
             lastName:lastName,
             password: hashedpass
+        })
+        const userId=await User._id;
+        await Account.create({
+            userId,
+            balance:1000
         })
         
         res.status(200).json({
